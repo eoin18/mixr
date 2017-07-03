@@ -1,0 +1,7 @@
+{
+  "name": "mixr",
+  "short_name": "mixr",
+  "description": "An app for figuring out what cocktails you can make given a set of ingredients",
+  "start_url": "/",
+  "display": "standalone"
+}

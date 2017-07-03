@@ -1,0 +1,114 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../mixr-ingredient/mixr-ingredient.html">
+
+<dom-module id="mixr-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+        font-family: monospace;
+      }
+
+      paper-button {
+        width: 50%;
+        color: white;
+        float: left;
+        margin: 0px;
+      }
+
+      .green{
+        background-color: #5ea848;
+      }
+
+      .blue {
+        background-color: #366abc;
+      }
+
+    </style>
+
+    <div>
+      <paper-autocomplete id="ingredientsInput" label="Enter an ingredient" source="[[ingredients]]" placeholder="Start typing..."></paper-autocomplete>
+      <div>
+        <h2>Selected ingredients:</h2>
+        <div id="emptyIngredients">
+          <div>Add some drink ingredients!</div><br />
+        </div>
+        <iron-list id="selectedIngredients" items="[[selectedIngredients]]" hidden>
+          <template>
+            <mixr-ingredient name="[[item]]"></mixr-ingredient>
+          </template>
+        </iron-list>
+      </div>
+      <div id="buttonContainer">
+        <paper-button raised disabled class="green" id="allButton">Show me everything!</paper-button>
+        <paper-button raised disabled class="blue" id="randomButton">Show me a random drink!</paper-button>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'mixr-app',
+
+      properties: {
+        ingredients: {
+          type: Array,
+          value: [],
+        },
+        selectedIngredients: {
+          type: Array,
+          value: [],
+        },
+        baseUrl: {
+          type: String,
+          value: "",
+        }
+      },
+
+      listeners: {
+        'autocomplete-selected': "_selectIngredients",
+        'ingredient-removed': "_removeIngredient"
+      },
+
+      ready: function(){
+        var ingredientsUrl = this.baseUrl + "api/json/v1/1/list.php?i=list";
+        var self = this;
+        $.get(ingredientsUrl, function(data) {
+          var ingredientList = data.drinks;
+          for(ingredient of ingredientList) {
+            self.push("ingredients", ingredient.strIngredient1);
+          }
+        });
+      },
+
+    _selectIngredients: function(e) {
+      this.push("selectedIngredients", e.detail.value);
+      this.$.ingredientsInput.clear();
+      if(this.selectedIngredients.length > 0) {
+        Polymer.dom(this.$.selectedIngredients).removeAttribute('hidden')
+        Polymer.dom(this.$.emptyIngredients).setAttribute('hidden', true)
+        Polymer.dom(this.$.allButton).removeAttribute('disabled')
+        Polymer.dom(this.$.randomButton).removeAttribute('disabled')
+      }
+    },
+
+    _removeIngredient: function(e) {
+      var index = this.selectedIngredients.indexOf(e.detail.name);
+      this.splice('selectedIngredients', index, 1);
+      if(this.selectedIngredients.length === 0) {
+        Polymer.dom(this.$.emptyIngredients).removeAttribute('hidden')
+        Polymer.dom(this.$.selectedIngredients).setAttribute('hidden', true)
+        Polymer.dom(this.$.allButton).setAttribute('disabled', true)
+        Polymer.dom(this.$.randomButton).setAttribute('disabled', true)
+      }
+    }
+
+    });
+  </script>
+</dom-module>

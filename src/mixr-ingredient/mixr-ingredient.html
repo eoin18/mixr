@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="mixr-ingredient">
+  <template>
+    <style>
+      :host {
+        display: block;
+        font-family: monospace;
+      }
+
+      paper-icon-button {
+        color: red;
+      }
+
+    </style>
+
+    <paper-item>
+      <paper-item-body>
+        [[name]]
+      </paper-item-body>
+      <paper-icon-button icon="close" on-tap="_ingredientRemoved"><paper-icon-button>
+    </paper-item>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'mixr-ingredient',
+
+      properties: {
+        name: {
+          type: String,
+          value: "",
+        }
+      },
+
+      _ingredientRemoved: function() {
+        console.log(this.name);
+        this.fire('ingredient-removed',{name: this.name});
+      }
+    });
+  </script>
+</dom-module>
