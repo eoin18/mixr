@@ -9,19 +9,33 @@
       :host {
         display: block;
         font-family: monospace;
+        padding: 5px;
       }
 
       paper-icon-button {
         color: red;
       }
 
+      #contentContainer {
+        background-color: lightgrey;
+        padding: 5px;
+        padding-left: 10px;
+        border-style: solid;
+        border-radius: 20px;
+        border-width: 2px;
+        float: left;
+        width: auto;
+      }
+
     </style>
 
     <paper-item>
-      <paper-item-body>
-        [[name]]
-      </paper-item-body>
-      <paper-icon-button icon="close" on-tap="_ingredientRemoved"><paper-icon-button>
+      <div id="contentContainer">
+        <paper-item-body>
+          [[name]]
+        </paper-item-body>
+        <paper-icon-button icon="close" on-tap="_ingredientRemoved"><paper-icon-button>
+      </div>
     </paper-item>
 
   </template>

@@ -12,7 +12,10 @@
     "paper-button": "^2.0.0",
     "paper-header-panel": "^2.0.0",
     "app-layout": "^2.0.0",
-    "vaadin-icons": "^4.1.0"
+    "vaadin-icons": "^4.1.0",
+    "paper-collapse-item": "^2.0.2",
+    "paper-spinner": "^2.0.0",
+    "simple-overlay": "^0.1.8"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

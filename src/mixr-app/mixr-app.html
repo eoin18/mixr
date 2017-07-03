@@ -4,8 +4,10 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
+<link rel="import" href="../../bower_components/simple-overlay/index.html">
 
 <link rel="import" href="../mixr-ingredient/mixr-ingredient.html">
+<link rel="import" href="../mixr-drink-list/mixr-drink-list.html">
 
 <dom-module id="mixr-app">
   <template>
@@ -29,7 +31,10 @@
         border-style: solid;
         border-radius: 1px;
         border-width: 2px;
-        border-color: darkgrey;
+        border-color: darkblue;
+        --paper-button-disabled: {
+          border-color: darkgrey;
+        };
       }
 
     </style>
@@ -53,10 +58,14 @@
           </template>
         </iron-list>
       </div>
+      <br/>
       <div id="buttonContainer">
         <paper-button raised disabled class="green" id="allButton">Show me everything!</paper-button>
-        <paper-button raised disabled class="blue" id="randomButton">Show me a random drink!</paper-button>
+        <paper-button raised disabled class="blue" id="randomButton" onclick="randomOverlay.open()">Show me a random drink!</paper-button>
       </div>
+      <simple-overlay id="randomOverlay" with-backdrop>
+        <mixr-drink-list ingredients="[[selectedIngredients]]"></mixr-drink-list>
+      </simple-overlay>
     </div>
 
   </template>

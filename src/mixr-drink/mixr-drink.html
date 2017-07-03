@@ -1,0 +1,38 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-collapse-item/paper-collapse-item.html">
+
+<dom-module id="mixr-drink">
+  <template>
+    <style>
+      :host {
+        display: block;
+        font-family: monospace;
+      }
+
+    </style>
+
+    <paper-collapse-item header="[[drink.strDrink]]">
+      <img href="[[drink.strDrinkThumb]]"></img>
+      <p>Category: [[drink.strCategory]]</p>
+      <p>Alcoholic: [[drink.strAlcoholic]]</p>
+      <p>Glass: [[drink.strGlas]]</p>
+      <p> Instructions: [[drink.strInstructions]]</p>
+    </paper-collapse-item>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'mixr-drink',
+
+      properties: {
+        drink: {
+          type: JSON,
+          value: () => {},
+        }
+      },
+
+    });
+  </script>
+</dom-module>

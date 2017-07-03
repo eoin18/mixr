@@ -1,0 +1,65 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="../mixr-drink-list/mixr-drink-list.html">
+
+<dom-module id="mixr-drink-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+        font-family: monospace;
+      }
+
+    </style>
+
+    <paper-spinner id="spinner" active></paper-spinner>
+    <iron-list id="drinksList" items="[[drinks]]" as="drink" hidden>
+      <mixr-drink drink="[[drink]]"></mixr-drink>
+    </iron-list>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'mixr-drink-list',
+
+      properties: {
+        drinks: {
+          type: Array,
+          value: () => [],
+        },
+        ingredients: {
+          type: Array,
+          value: () => [],
+          observer: "_ingredientsChanged"
+        },
+        baseUrl: {
+          type: String,
+          value: "",
+        }
+      },
+
+      _ingredientsChanged: function(newItems, oldItems){
+        var self = this;
+        if(newItems && newItems.length > 1 && newItems != oldItems) {
+          Polymer.dom(this.$.drinksList).setAttribute('hidden', true);
+          Polymer.dom(this.$.spinner).removeAttribute('hidden');
+          for(ingredient in ingredients){
+            $.get(baseUrl + "api/json/v1/1/filter.php?i=" + ingredient, function(data){
+                var drinks = data.drinks;
+                for(drink in drinks) {
+                  self.push('drinks', drink);
+                }
+                Polymer.dom(this.$.drinksList).removeAttribute('hidden');
+                Polymer.dom(this.$.spinner).setAttribute('hidden', true);
+            });
+          }
+        }
+      }
+
+    });
+  </script>
+</dom-module>
