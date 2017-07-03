@@ -9,7 +9,10 @@
     "jquery": "^3.2.1",
     "iron-list": "^2.0.3",
     "paper-icon-button": "^2.0.0",
-    "paper-button": "^2.0.0"
+    "paper-button": "^2.0.0",
+    "paper-header-panel": "^2.0.0",
+    "app-layout": "^2.0.0",
+    "vaadin-icons": "^4.1.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

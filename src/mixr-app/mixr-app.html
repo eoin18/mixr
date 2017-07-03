@@ -2,6 +2,8 @@
 <link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
 
 <link rel="import" href="../mixr-ingredient/mixr-ingredient.html">
 
@@ -13,23 +15,31 @@
         font-family: monospace;
       }
 
+      app-header {
+        background-color: #366abc;
+        color: white;
+      }
+
       paper-button {
         width: 50%;
         color: white;
         float: left;
         margin: 0px;
-      }
-
-      .green{
-        background-color: #5ea848;
-      }
-
-      .blue {
         background-color: #366abc;
+        border-style: solid;
+        border-radius: 1px;
+        border-width: 2px;
+        border-color: darkgrey;
       }
 
     </style>
 
+    <app-header reveals>
+      <app-toolbar>
+        <iron-icon icon="vaadin:glass"></iron-icon>
+        <div main-title>mixr</div>
+      </app-toolbar>
+    </app-header>
     <div>
       <paper-autocomplete id="ingredientsInput" label="Enter an ingredient" source="[[ingredients]]" placeholder="Start typing..."></paper-autocomplete>
       <div>
