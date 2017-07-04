@@ -1,8 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/iron-overlay-behavior/iron-overlay-behavior.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-collapse-item/paper-collapse-group.html">
 
-<link rel="import" href="../mixr-drink-list/mixr-drink-list.html">
+<link rel="import" href="../mixr-drink/mixr-drink.html">
 
 <dom-module id="mixr-drink-list">
   <template>
@@ -10,14 +14,61 @@
       :host {
         display: block;
         font-family: monospace;
+        overflow: auto;
+      }
+
+      #drinksList {
+        background-color: lightgrey;
+        border-style: solid;
+        border-width: 2px;
+        border-color: black;
+        border-radius: 10px;
+        float: left;
+        min-width: 100%;
+        min-height: 100%;
+      }
+
+      #drinkListHeader {
+        height: 55px;
+      }
+
+      h2 {
+        text-align: center;
+        float: left;
+        margin: 16px;
+      }
+
+      paper-icon-button {
+        float: right;
+        margin: 16px;
+        padding: 0px;
+        width: 23px;
+        height: 23px;
+        border-style: solid;
+      }
+
+      #drink {
+        border-top-style: solid;
+        border-top-width: 1px;
+        border-top-color: black;  
       }
 
     </style>
 
-    <paper-spinner id="spinner" active></paper-spinner>
-    <iron-list id="drinksList" items="[[drinks]]" as="drink" hidden>
-      <mixr-drink drink="[[drink]]"></mixr-drink>
-    </iron-list>
+    <div>
+      <paper-spinner id="spinner" active></paper-spinner>
+      <div id="drinksList" hidden>
+        <div id="drinkListHeader">
+          <h2>You can make...</h2>
+          <paper-icon-button icon="close" on-tap="_close"></paper-icon-button>
+        </div>
+        <paper-collapse-group>
+          <template is="dom-repeat" items="[[drinks]]">
+            <mixr-drink id="drink" drink-name="[[item.strDrink]]" drink-id="[[item.idDrink]]" base-url="[[baseUrl]]"></mixr-drink>
+          </template>
+        </paper-collapse-group>
+      </div>
+    </div>
 
   </template>
 
@@ -25,6 +76,7 @@
     Polymer({
 
       is: 'mixr-drink-list',
+      behaviors: [Polymer.IronOverlayBehavior],
 
       properties: {
         drinks: {
@@ -34,7 +86,6 @@
         ingredients: {
           type: Array,
           value: () => [],
-          observer: "_ingredientsChanged"
         },
         baseUrl: {
           type: String,
@@ -42,22 +93,34 @@
         }
       },
 
-      _ingredientsChanged: function(newItems, oldItems){
+      observers :[
+        '_ingredientsChanged(ingredients.splices)'
+      ],
+
+      _ingredientsChanged: function(splice){
         var self = this;
-        if(newItems && newItems.length > 1 && newItems != oldItems) {
+        if(this.ingredients) {
           Polymer.dom(this.$.drinksList).setAttribute('hidden', true);
           Polymer.dom(this.$.spinner).removeAttribute('hidden');
-          for(ingredient in ingredients){
-            $.get(baseUrl + "api/json/v1/1/filter.php?i=" + ingredient, function(data){
+          for(var index in this.ingredients){
+            var url = this.baseUrl + "api/json/v1/1/filter.php?i=" + this.ingredients[index];
+            $.get(url, function(data){
                 var drinks = data.drinks;
-                for(drink in drinks) {
-                  self.push('drinks', drink);
+                for(var i in drinks) {
+                  if($.inArray(drinks[i], self.drinks) === -1){
+                    self.push('drinks', drinks[i]);
+                  }
                 }
-                Polymer.dom(this.$.drinksList).removeAttribute('hidden');
-                Polymer.dom(this.$.spinner).setAttribute('hidden', true);
+                debugger;
+                Polymer.dom(self.$.drinksList).removeAttribute('hidden');
+                Polymer.dom(self.$.spinner).setAttribute('hidden', true);
             });
           }
         }
+      },
+
+      _close: function() {
+        this.close();
       }
 
     });

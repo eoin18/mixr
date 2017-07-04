@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-collapse-item/paper-collapse-item.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <dom-module id="mixr-drink">
   <template>
@@ -11,12 +12,15 @@
 
     </style>
 
-    <paper-collapse-item header="[[drink.strDrink]]">
-      <img href="[[drink.strDrinkThumb]]"></img>
-      <p>Category: [[drink.strCategory]]</p>
-      <p>Alcoholic: [[drink.strAlcoholic]]</p>
-      <p>Glass: [[drink.strGlas]]</p>
-      <p> Instructions: [[drink.strInstructions]]</p>
+    <paper-collapse-item header="[[drinkName]]">
+      <paper-spinner id="spinner" active><paper-spinner>
+      <div id="drinkDescription" hidden>
+        <img href="[[drink.strDrinkThumb]]"></img>
+        <p>Category: [[drink.strCategory]]</p>
+        <p>Alcoholic: [[drink.strAlcoholic]]</p>
+        <p>Glass: [[drink.strGlas]]</p>
+        <p> Instructions: [[drink.strInstructions]]</p>
+      </div>
     </paper-collapse-item>
 
   </template>
@@ -27,9 +31,34 @@
       is: 'mixr-drink',
 
       properties: {
-        drink: {
+        drinkName: {
+          type: String,
+          value: ""
+        },
+        drinkId: {
+          type: String,
+          value: ""
+        },
+        drinkDesc: {
           type: JSON,
-          value: () => {},
+          value: () => {}
+        },
+        baseUrl: {
+          type: String,
+          value: ""
+        }
+      },
+
+      listeners: {
+        'toggle': '_retrieveDrinkDetails'
+      },
+
+      _retrieveDrinkDetails: function(e) {
+        debugger;
+        if(this.opened && !this.drinkDesc) {
+          $.get(this.baseUrl + "api/json/v1/1/lookup.php?i=" + this.drinkId, function(data){
+            debugger;
+          });
         }
       },
 
