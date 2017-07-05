@@ -16,7 +16,8 @@
     "paper-collapse-item": "^2.0.2",
     "paper-spinner": "^2.0.0",
     "simple-overlay": "^0.1.8",
-    "iron-overlay-behavior": "^2.0.0"
+    "iron-overlay-behavior": "^2.0.0",
+    "vaadin-grid": "^2.0.3"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

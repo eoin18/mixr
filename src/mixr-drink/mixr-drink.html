@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-collapse-item/paper-collapse-item.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
 
 <dom-module id="mixr-drink">
   <template>
@@ -10,16 +11,54 @@
         font-family: monospace;
       }
 
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      #collapse {
+        --paper-collapse-item-header: {
+          white-space: normal;
+        };
+      }
+
+      #drinkDescription {
+        white-space: normal;
+      }
+
+      #ingredientGrid {
+        height: 100%;
+        --vaadin-grid-cell: {
+          background: lemonChiffon;
+        }
+      }
+
     </style>
 
-    <paper-collapse-item header="[[drinkName]]">
-      <paper-spinner id="spinner" active><paper-spinner>
-      <div id="drinkDescription" hidden>
-        <img href="[[drink.strDrinkThumb]]"></img>
-        <p>Category: [[drink.strCategory]]</p>
-        <p>Alcoholic: [[drink.strAlcoholic]]</p>
-        <p>Glass: [[drink.strGlas]]</p>
-        <p> Instructions: [[drink.strInstructions]]</p>
+    <paper-collapse-item header="[[drinkName]]" id="collapse" on-toggle="_retrieveDrinkDetails">
+      <div>
+        <paper-spinner id="spinner" active></paper-spinner>
+        <div id="drinkDescription" hidden>
+          <template is="dom-if" if="[[drinkDesc.strDrinkThumb]]">
+            <img src="[[drinkDesc.strDrinkThumb]]"></img>
+          </template>
+          <p><b>Category:</b> [[drinkDesc.strCategory]]</p>
+          <p><b>Alcoholic?</b> [[drinkDesc.strAlcoholic]]</p>
+          <p><b>Glass:</b> [[drinkDesc.strGlass]]</p>
+
+          <vaadin-grid id="ingredientGrid" items="[[ingredients]]">
+            <vaadin-grid-column>
+              <template class="header">Ingredient</template>
+              <template>[[item.ingredient]]</template>
+            </vaadin-grid-column>
+            <vaadin-grid-column>
+              <template class="header">Measure</template>
+              <template>[[item.measure]]</template>
+            </vaadin-grid-column>
+          </vaadin-grid>
+
+          <p><b>Instructions:</b> [[drinkDesc.strInstructions]]</p>
+        </div>
       </div>
     </paper-collapse-item>
 
@@ -46,21 +85,37 @@
         baseUrl: {
           type: String,
           value: ""
+        },
+        ingredients: {
+          type: Array,
+          value: () => {}
         }
-      },
-
-      listeners: {
-        'toggle': '_retrieveDrinkDetails'
       },
 
       _retrieveDrinkDetails: function(e) {
-        debugger;
-        if(this.opened && !this.drinkDesc) {
+        var self = this;
+        if(e.detail.opened && !this.drinkDesc) {
           $.get(this.baseUrl + "api/json/v1/1/lookup.php?i=" + this.drinkId, function(data){
-            debugger;
+            self.drinkDesc = data.drinks[0];
+            self.ingredients = self._buildIngredients();
+            Polymer.dom(self.$.drinkDescription).removeAttribute('hidden');
+            Polymer.dom(self.$.spinner).setAttribute('hidden', true);
           });
         }
       },
+
+      _buildIngredients: function() {
+        var ingredientsJSON = {'drinks': []};
+        for(var i = 1 ; i <= 15 ; i++) {
+          var ingredientStr = "strIngredient" + i;
+          var measureStr = "strMeasure" + i;
+          if(this.drinkDesc[ingredientStr] === "") {
+            break;
+          }
+          ingredientsJSON.drinks.push({"ingredient": this.drinkDesc[ingredientStr], "measure": this.drinkDesc[measureStr]})
+        }
+        return ingredientsJSON.drinks;
+      }
 
     });
   </script>

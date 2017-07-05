@@ -13,8 +13,8 @@
     <style>
       :host {
         display: block;
-        font-family: monospace;
-        overflow: auto;
+        font-family: sans-serif;
+        overflow-y: auto;
       }
 
       #drinksList {
@@ -29,7 +29,7 @@
       }
 
       #drinkListHeader {
-        height: 55px;
+        height: 60px;
       }
 
       h2 {
@@ -42,15 +42,15 @@
         float: right;
         margin: 16px;
         padding: 0px;
-        width: 23px;
-        height: 23px;
+        width: 26px;
+        height: 26px;
         border-style: solid;
       }
 
       #drink {
         border-top-style: solid;
         border-top-width: 1px;
-        border-top-color: black;  
+        border-top-color: black;
       }
 
     </style>
@@ -63,7 +63,7 @@
           <paper-icon-button icon="close" on-tap="_close"></paper-icon-button>
         </div>
         <paper-collapse-group>
-          <template is="dom-repeat" items="[[drinks]]">
+          <template is="dom-repeat" items="[[drinks]]" sort="_sortDrinks" filter="_filterDrinks" id="filteredDrinkList">
             <mixr-drink id="drink" drink-name="[[item.strDrink]]" drink-id="[[item.idDrink]]" base-url="[[baseUrl]]"></mixr-drink>
           </template>
         </paper-collapse-group>
@@ -90,6 +90,11 @@
         baseUrl: {
           type: String,
           value: "",
+        },
+        randomIndex: {
+          type: Number,
+          value: -1,
+          observer: '_randomChanged'
         }
       },
 
@@ -98,30 +103,84 @@
       ],
 
       _ingredientsChanged: function(splice){
-        var self = this;
-        if(this.ingredients) {
+        if(splice) {
+          var self = this;
           Polymer.dom(this.$.drinksList).setAttribute('hidden', true);
           Polymer.dom(this.$.spinner).removeAttribute('hidden');
-          for(var index in this.ingredients){
-            var url = this.baseUrl + "api/json/v1/1/filter.php?i=" + this.ingredients[index];
-            $.get(url, function(data){
-                var drinks = data.drinks;
-                for(var i in drinks) {
-                  if($.inArray(drinks[i], self.drinks) === -1){
-                    self.push('drinks', drinks[i]);
-                  }
-                }
-                debugger;
-                Polymer.dom(self.$.drinksList).removeAttribute('hidden');
-                Polymer.dom(self.$.spinner).setAttribute('hidden', true);
-            });
+          if(splice.indexSplices[0].addedCount === 1) {
+            var newDrink = splice.indexSplices[0].object[splice.indexSplices[0].index];
+            var url = this.baseUrl + "api/json/v1/1/filter.php?i=" + newDrink;
+            this._getDrinks(self, url);
+          } else if(splice.indexSplices[0].removed.length === 1) {
+            this.splice('drinks', 0, this.drinks.length)
+            if(this.ingredients.length > 0) {
+              for(var index in this.ingredients){
+                var url = this.baseUrl + "api/json/v1/1/filter.php?i=" + this.ingredients[index];
+                this._getDrinks(self, url);
+              }
+            }
           }
         }
       },
 
+      _getDrinks: function(self, url) {
+        $.get(url, function(data){
+            var drinks = data.drinks;
+            for(var i in drinks) {
+              if(!self._isInArray(drinks[i])) {
+                self.push('drinks', drinks[i]);
+              }
+            }
+            Polymer.dom(self.$.drinksList).removeAttribute('hidden');
+            Polymer.dom(self.$.spinner).setAttribute('hidden', true);
+        });
+      },
+
+      _isInArray: function(item) {
+        for(var i in this.drinks) {
+          if(this.drinks[i].strDrink === item.strDrink) {
+            return true;
+          }
+        }
+        return false;
+      },
+
+      _sortDrinks: function(a, b) {
+        return a.strDrink > b.strDrink ? 1 : (a.strDrink < b.strDrink ? -1 : 0);
+      },
+
+      _filterDrinks: function(item) {
+        if(this.randomIndex > -1) {
+          var actualIndex = parseInt(this._indexOf(this.drinks, item));
+          return actualIndex === this.randomIndex;
+        }
+        return true;
+      },
+
+      _indexOf: function(array, item) {
+        for(var i in this.drinks) {
+          if(this.drinks[i].strDrink === item.strDrink) {
+            return i;
+          }
+        }
+        return -1;
+      },
+
+      _randomize: function() {
+        this.randomIndex = Math.floor((Math.random() * this.drinks.length))
+      },
+
+      _unrandomize: function() {
+        this.randomIndex = -1;
+      },
+
+      _randomChanged: function(newItem, oldItem) {
+        this.$.filteredDrinkList.render();
+      },
+
       _close: function() {
         this.close();
-      }
+      },
 
     });
   </script>

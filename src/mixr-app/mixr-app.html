@@ -13,7 +13,8 @@
     <style>
       :host {
         display: block;
-        font-family: monospace;
+        font-family: sans-serif;
+        background-color: lemonChiffon;
       }
 
       app-header {
@@ -65,8 +66,8 @@
       </div>
       <br/>
       <div id="buttonContainer">
-        <paper-button raised disabled class="green" id="allButton">Show me everything!</paper-button>
-        <paper-button raised disabled class="blue" id="randomButton" onclick="drinkListOverlay.open()">Show me a random drink!</paper-button>
+        <paper-button raised disabled class="green" id="allButton" on-tap="_unrandomizeAndOpenOverlay">Show me everything!</paper-button>
+        <paper-button raised disabled class="blue" id="randomButton" on-tap="_randomizeAndOpenOverlay">Show me a random drink!</paper-button>
       </div>
       <mixr-drink-list id="drinkListOverlay" ingredients="[[selectedIngredients]]" base-url="[[baseUrl]]" with-backdrop></mixr-drink-list>
     </div>
@@ -86,6 +87,7 @@
         selectedIngredients: {
           type: Array,
           value: [],
+          notify: true,
         },
         baseUrl: {
           type: String,
@@ -129,7 +131,17 @@
         Polymer.dom(this.$.allButton).setAttribute('disabled', true)
         Polymer.dom(this.$.randomButton).setAttribute('disabled', true)
       }
-    }
+    },
+
+    _randomizeAndOpenOverlay: function() {
+      this.$.drinkListOverlay._randomize();
+      this.$.drinkListOverlay.open();
+    },
+
+    _unrandomizeAndOpenOverlay: function() {
+      this.$.drinkListOverlay._unrandomize();
+      this.$.drinkListOverlay.open();
+    },
 
     });
   </script>
