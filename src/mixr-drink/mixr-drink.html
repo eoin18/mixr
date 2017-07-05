@@ -115,6 +115,12 @@
           ingredientsJSON.drinks.push({"ingredient": this.drinkDesc[ingredientStr], "measure": this.drinkDesc[measureStr]})
         }
         return ingredientsJSON.drinks;
+      },
+
+      _toggle: function(open){
+        if((open && !this.$.collapse.opened) || (!open && this.$.collapse.opened)) {
+          this.$.collapse._toggleOpened();
+        }
       }
 
     });

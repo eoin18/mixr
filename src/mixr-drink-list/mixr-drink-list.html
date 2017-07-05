@@ -47,7 +47,7 @@
         border-style: solid;
       }
 
-      #drink {
+      .drink {
         border-top-style: solid;
         border-top-width: 1px;
         border-top-color: black;
@@ -64,7 +64,7 @@
         </div>
         <paper-collapse-group>
           <template is="dom-repeat" items="[[drinks]]" sort="_sortDrinks" filter="_filterDrinks" id="filteredDrinkList">
-            <mixr-drink id="drink" drink-name="[[item.strDrink]]" drink-id="[[item.idDrink]]" base-url="[[baseUrl]]"></mixr-drink>
+            <mixr-drink class="drink" drink-name="[[item.strDrink]]" drink-id="[[item.idDrink]]" base-url="[[baseUrl]]"></mixr-drink>
           </template>
         </paper-collapse-group>
       </div>
@@ -167,7 +167,8 @@
       },
 
       _randomize: function() {
-        this.randomIndex = Math.floor((Math.random() * this.drinks.length))
+        this.randomIndex = Math.floor((Math.random() * this.drinks.length));
+        debugger;
       },
 
       _unrandomize: function() {
@@ -175,7 +176,10 @@
       },
 
       _randomChanged: function(newItem, oldItem) {
-        this.$.filteredDrinkList.render();
+        if(oldItem) {
+          this.$.filteredDrinkList.render();
+          Polymer.dom(this.$$('.drink')).node._toggle(newItem != -1);
+        }
       },
 
       _close: function() {
