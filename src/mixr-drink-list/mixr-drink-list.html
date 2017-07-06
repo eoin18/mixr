@@ -168,7 +168,6 @@
 
       _randomize: function() {
         this.randomIndex = Math.floor((Math.random() * this.drinks.length));
-        debugger;
       },
 
       _unrandomize: function() {
@@ -183,6 +182,7 @@
       },
 
       _close: function() {
+        Polymer.dom(this.$$('.drink')).node._toggle(false);
         this.close();
       },
 

@@ -94,7 +94,7 @@
 
       _retrieveDrinkDetails: function(e) {
         var self = this;
-        if(e.detail.opened && !this.drinkDesc) {
+        if(e.detail.opened && (!this.drinkDesc || this.drinkDesc.strDrink !== this.drinkName)) {
           $.get(this.baseUrl + "api/json/v1/1/lookup.php?i=" + this.drinkId, function(data){
             self.drinkDesc = data.drinks[0];
             self.ingredients = self._buildIngredients();
